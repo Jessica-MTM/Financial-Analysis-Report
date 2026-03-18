@@ -1,0 +1,1387 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Financial Advisory Report</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #0d1b2a;
+    --ink: #1a2940;
+    --slate: #2c3e55;
+    --gold: #c9a84c;
+    --gold-light: #e8c97a;
+    --cream: #f8f4ed;
+    --warm-white: #fdfaf5;
+    --muted: #8a99ab;
+    --soft: #e8edf3;
+    --success: #2e7d5e;
+    --warn: #b85c2e;
+    --card-bg: #ffffff;
+    --border: #dde3ea;
+    --shadow: 0 2px 16px rgba(13,27,42,0.07);
+    --shadow-lg: 0 8px 40px rgba(13,27,42,0.12);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--cream);
+    color: var(--ink);
+    min-height: 100vh;
+  }
+
+  /* ── HEADER ── */
+  header {
+    background: var(--navy);
+    padding: 0;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 24px rgba(0,0,0,0.25);
+  }
+  .header-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 18px 40px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 20px;
+    color: var(--gold);
+    letter-spacing: 0.04em;
+  }
+  .logo span { color: #fff; font-weight: 300; font-size: 13px; display: block; letter-spacing: 0.12em; margin-top: 2px; }
+  .header-actions { display: flex; gap: 12px; }
+  .btn-ghost {
+    background: transparent;
+    border: 1px solid rgba(201,168,76,0.4);
+    color: var(--gold-light);
+    padding: 8px 18px;
+    border-radius: 4px;
+    font-size: 13px;
+    font-family: 'DM Sans', sans-serif;
+    cursor: pointer;
+    transition: all 0.2s;
+    letter-spacing: 0.04em;
+  }
+  .btn-ghost:hover { background: rgba(201,168,76,0.12); border-color: var(--gold); }
+  .btn-primary {
+    background: var(--gold);
+    border: none;
+    color: var(--navy);
+    padding: 8px 22px;
+    border-radius: 4px;
+    font-size: 13px;
+    font-weight: 600;
+    font-family: 'DM Sans', sans-serif;
+    cursor: pointer;
+    transition: all 0.2s;
+    letter-spacing: 0.04em;
+  }
+  .btn-primary:hover { background: var(--gold-light); }
+
+  /* ── LAYOUT ── */
+  .shell {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 40px 40px 80px;
+    display: grid;
+    grid-template-columns: 260px 1fr;
+    gap: 32px;
+    align-items: start;
+  }
+
+  /* ── SIDEBAR NAV ── */
+  .sidebar {
+    position: sticky;
+    top: 80px;
+  }
+  .progress-header {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--muted);
+    margin-bottom: 16px;
+  }
+  .progress-bar-wrap {
+    background: var(--soft);
+    height: 4px;
+    border-radius: 2px;
+    margin-bottom: 24px;
+    overflow: hidden;
+  }
+  .progress-bar {
+    height: 100%;
+    background: var(--gold);
+    border-radius: 2px;
+    transition: width 0.4s ease;
+    width: 14%;
+  }
+  .nav-items { display: flex; flex-direction: column; gap: 4px; }
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 9px 14px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.18s;
+    font-size: 13.5px;
+    color: var(--muted);
+    border: 1px solid transparent;
+  }
+  .nav-item:hover { background: rgba(201,168,76,0.06); color: var(--ink); }
+  .nav-item.active { background: var(--warm-white); color: var(--navy); font-weight: 500; border-color: var(--border); box-shadow: var(--shadow); }
+  .nav-item.completed { color: var(--success); }
+  .nav-dot {
+    width: 20px; height: 20px;
+    border-radius: 50%;
+    border: 2px solid currentColor;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 10px;
+    flex-shrink: 0;
+  }
+  .nav-item.active .nav-dot { background: var(--gold); border-color: var(--gold); color: var(--navy); font-weight: 700; }
+  .nav-item.completed .nav-dot { background: var(--success); border-color: var(--success); color: #fff; }
+
+  /* ── MAIN CONTENT ── */
+  .main { min-width: 0; }
+
+  .section-panel {
+    display: none;
+    animation: fadeUp 0.3s ease;
+  }
+  .section-panel.visible { display: block; }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .panel-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 26px;
+    color: var(--navy);
+    margin-bottom: 6px;
+  }
+  .panel-subtitle {
+    font-size: 14px;
+    color: var(--muted);
+    margin-bottom: 28px;
+    line-height: 1.5;
+  }
+
+  /* ── CARDS ── */
+  .card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 24px 28px;
+    margin-bottom: 20px;
+    box-shadow: var(--shadow);
+  }
+  .card-title {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--gold);
+    margin-bottom: 18px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--soft);
+  }
+
+  /* ── GRID ── */
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+  .col-span-2 { grid-column: span 2; }
+
+  /* ── FORM FIELDS ── */
+  .field { display: flex; flex-direction: column; gap: 5px; }
+  .field label {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--slate);
+    letter-spacing: 0.02em;
+  }
+  .field input, .field select, .field textarea {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    padding: 9px 12px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background: var(--warm-white);
+    color: var(--ink);
+    transition: border-color 0.18s, box-shadow 0.18s;
+    outline: none;
+    width: 100%;
+  }
+  .field input:focus, .field select:focus, .field textarea:focus {
+    border-color: var(--gold);
+    box-shadow: 0 0 0 3px rgba(201,168,76,0.12);
+  }
+  .field select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%238a99ab' d='M6 8L1 3h10z'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; padding-right: 32px; }
+  .field input[type="number"] { -moz-appearance: textfield; }
+  .field input[type="number"]::-webkit-outer-spin-button,
+  .field input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; }
+
+  .field-hint { font-size: 11px; color: var(--muted); }
+
+  /* two-person columns */
+  .person-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .person-label {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .person-label .badge {
+    background: var(--navy);
+    color: var(--gold);
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 10px;
+  }
+  .person-label .badge.partner { background: var(--slate); color: var(--gold-light); }
+
+  /* row layout for labeled fields */
+  .row-field {
+    display: grid;
+    grid-template-columns: 200px 1fr 1fr;
+    gap: 12px;
+    align-items: center;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--soft);
+  }
+  .row-field:last-child { border-bottom: none; }
+  .row-field .row-label { font-size: 13px; color: var(--slate); }
+  .row-field-header {
+    display: grid;
+    grid-template-columns: 200px 1fr 1fr;
+    gap: 12px;
+    padding: 0 0 8px;
+    margin-bottom: 4px;
+  }
+  .row-field-header span { font-size: 11px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; }
+
+  /* ── ASSUMPTIONS TABLE ── */
+  .assumption-row {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 16px;
+    align-items: center;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--soft);
+  }
+  .assumption-row:last-child { border-bottom: none; }
+  .assumption-row .a-label { font-size: 13px; color: var(--slate); }
+  .assumption-row input { width: 100px; text-align: right; }
+
+  /* ── NAVIGATION BUTTONS ── */
+  .nav-buttons {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 28px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border);
+  }
+  .btn-back {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    padding: 10px 24px;
+    border-radius: 6px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.18s;
+  }
+  .btn-back:hover { border-color: var(--slate); color: var(--slate); }
+  .btn-next {
+    background: var(--navy);
+    border: none;
+    color: #fff;
+    padding: 11px 32px;
+    border-radius: 6px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.18s;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .btn-next:hover { background: var(--slate); }
+  .btn-generate {
+    background: var(--gold);
+    border: none;
+    color: var(--navy);
+    padding: 12px 36px;
+    border-radius: 6px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+    letter-spacing: 0.02em;
+  }
+  .btn-generate:hover { background: var(--gold-light); transform: translateY(-1px); box-shadow: 0 4px 16px rgba(201,168,76,0.3); }
+
+  /* ── RESULTS PANEL ── */
+  #results-panel { display: none; }
+  #results-panel.visible { display: block; }
+
+  .results-header {
+    background: var(--navy);
+    border-radius: 10px;
+    padding: 28px 32px;
+    margin-bottom: 24px;
+    color: #fff;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .results-header h2 { font-family: 'Playfair Display', serif; font-size: 22px; color: var(--gold); margin-bottom: 4px; }
+  .results-header p { font-size: 13px; color: rgba(255,255,255,0.6); }
+  .results-meta { text-align: right; font-size: 12px; color: rgba(255,255,255,0.5); }
+
+  .results-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px; }
+  .results-grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; margin-bottom: 20px; }
+
+  .result-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 20px 22px;
+    box-shadow: var(--shadow);
+  }
+  .result-card .rc-label {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.09em;
+    color: var(--muted);
+    margin-bottom: 14px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--soft);
+  }
+
+  .metric-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 7px 0;
+    border-bottom: 1px solid var(--soft);
+    font-size: 13px;
+  }
+  .metric-row:last-child { border-bottom: none; }
+  .metric-row .m-label { color: var(--slate); }
+  .metric-row .m-value { font-weight: 600; color: var(--navy); }
+  .metric-row .m-value.shortage { color: var(--warn); }
+  .metric-row .m-value.ok { color: var(--success); }
+  .metric-row .m-value.neutral { color: var(--muted); }
+
+  .summary-block {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 22px 26px;
+    margin-bottom: 20px;
+    box-shadow: var(--shadow);
+  }
+  .summary-block h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 16px;
+    color: var(--navy);
+    margin-bottom: 14px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--soft);
+  }
+  .summary-text { font-size: 13.5px; color: var(--slate); line-height: 1.7; }
+  .summary-text p { margin-bottom: 6px; }
+  .summary-text .highlight { color: var(--navy); font-weight: 600; }
+  .summary-text .warn { color: var(--warn); font-weight: 600; }
+  .summary-text .ok { color: var(--success); font-weight: 600; }
+
+  .ratio-bar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--soft);
+    font-size: 13px;
+  }
+  .ratio-bar:last-child { border-bottom: none; }
+  .ratio-bar .rb-label { width: 200px; flex-shrink: 0; color: var(--slate); }
+  .ratio-bar .rb-track { flex: 1; height: 6px; background: var(--soft); border-radius: 3px; overflow: hidden; }
+  .ratio-bar .rb-fill { height: 100%; border-radius: 3px; transition: width 0.6s ease; }
+  .ratio-bar .rb-fill.good { background: var(--success); }
+  .ratio-bar .rb-fill.warn { background: var(--warn); }
+  .ratio-bar .rb-fill.neutral { background: var(--gold); }
+  .ratio-bar .rb-val { width: 60px; text-align: right; font-weight: 600; font-size: 12px; }
+  .ratio-bar .rb-guide { font-size: 11px; color: var(--muted); width: 120px; text-align: right; }
+
+  .person-tab-btns { display: flex; gap: 8px; margin-bottom: 20px; }
+  .ptab {
+    padding: 7px 20px;
+    border-radius: 20px;
+    border: 1px solid var(--border);
+    font-size: 13px;
+    cursor: pointer;
+    background: transparent;
+    font-family: 'DM Sans', sans-serif;
+    color: var(--muted);
+    transition: all 0.18s;
+  }
+  .ptab.active { background: var(--navy); color: var(--gold); border-color: var(--navy); }
+
+  /* Print */
+  @media print {
+    header, .sidebar, .nav-buttons, .header-actions, .person-tab-btns { display: none !important; }
+    .shell { grid-template-columns: 1fr; padding: 0; }
+    .results-grid, .results-grid-3 { grid-template-columns: 1fr 1fr; }
+    #results-panel { display: block !important; }
+    .section-panel { display: none !important; }
+  }
+
+  @media (max-width: 900px) {
+    .shell { grid-template-columns: 1fr; padding: 20px; }
+    .sidebar { position: static; }
+    .nav-items { flex-direction: row; flex-wrap: wrap; }
+    .person-cols { grid-template-columns: 1fr; }
+    .results-grid, .results-grid-3 { grid-template-columns: 1fr; }
+    .row-field { grid-template-columns: 1fr 1fr 1fr; }
+    .row-field .row-label { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <div class="logo">
+      Financial Advisory Report
+      <span>FACT FIND & NEEDS ANALYSIS</span>
+    </div>
+    <div class="header-actions">
+      <button class="btn-ghost" onclick="resetForm()">Reset</button>
+      <button class="btn-primary" onclick="window.print()">Print / Export</button>
+    </div>
+  </div>
+</header>
+
+<div class="shell">
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="progress-header">Completion</div>
+    <div class="progress-bar-wrap"><div class="progress-bar" id="progressBar"></div></div>
+    <nav class="nav-items" id="sideNav">
+      <div class="nav-item active" onclick="goTo(0)">
+        <div class="nav-dot">1</div> Personal Info
+      </div>
+      <div class="nav-item" onclick="goTo(1)">
+        <div class="nav-dot">2</div> Income & Expenses
+      </div>
+      <div class="nav-item" onclick="goTo(2)">
+        <div class="nav-dot">3</div> Assets & Liabilities
+      </div>
+      <div class="nav-item" onclick="goTo(3)">
+        <div class="nav-dot">4</div> Insurance Coverage
+      </div>
+      <div class="nav-item" onclick="goTo(4)">
+        <div class="nav-dot">5</div> Planning Goals
+      </div>
+      <div class="nav-item" onclick="goTo(5)">
+        <div class="nav-dot">6</div> Assumptions
+      </div>
+      <div class="nav-item" onclick="goTo(6)">
+        <div class="nav-dot">7</div> Results
+      </div>
+    </nav>
+  </aside>
+
+  <!-- Main -->
+  <main class="main">
+
+    <!-- SECTION 0: Personal Info -->
+    <div class="section-panel visible" id="sec0">
+      <div class="panel-title">Personal Information</div>
+      <div class="panel-subtitle">Enter the details for the client and partner (if applicable).</div>
+
+      <div class="card">
+        <div class="card-title">Client Details</div>
+        <div class="person-cols">
+          <div>
+            <div class="person-label"><div class="badge">SELF</div> Primary Client</div>
+            <div style="display:flex;flex-direction:column;gap:12px;">
+              <div class="field"><label>Name (As Per NRIC)</label><input type="text" id="p1_name" placeholder="Full name"></div>
+              <div class="field"><label>NRIC</label><input type="text" id="p1_nric" placeholder="S1234567A"></div>
+              <div class="field"><label>Date of Birth</label><input type="date" id="p1_dob"></div>
+              <div class="field"><label>Nationality</label>
+                <select id="p1_nationality">
+                  <option value="">Select</option>
+                  <option>Singaporean</option><option>Singapore PR</option><option>Foreigner</option>
+                </select>
+              </div>
+              <div class="field"><label>Smoker</label>
+                <select id="p1_smoker"><option value="">Select</option><option>Non-Smoker</option><option>Smoker</option></select>
+              </div>
+              <div class="field"><label>Marital Status</label>
+                <select id="p1_marital"><option value="">Select</option><option>Single</option><option>Married</option><option>Divorced</option><option>Widowed</option></select>
+              </div>
+              <div class="field"><label>Highest Education</label>
+                <select id="p1_edu"><option value="">Select</option><option>Primary</option><option>Secondary</option><option>Diploma</option><option>Degree</option><option>Postgraduate</option></select>
+              </div>
+              <div class="field"><label>Occupation</label><input type="text" id="p1_occ" placeholder="e.g. Engineer"></div>
+              <div class="field"><label>Company Name</label><input type="text" id="p1_company"></div>
+              <div class="field"><label>Contact Number</label><input type="tel" id="p1_contact"></div>
+              <div class="field"><label>Email Address</label><input type="email" id="p1_email"></div>
+            </div>
+          </div>
+          <div>
+            <div class="person-label"><div class="badge partner">PARTNER</div> Spouse / Partner</div>
+            <div style="display:flex;flex-direction:column;gap:12px;">
+              <div class="field"><label>Name (As Per NRIC)</label><input type="text" id="p2_name" placeholder="Full name"></div>
+              <div class="field"><label>NRIC</label><input type="text" id="p2_nric" placeholder="S1234567B"></div>
+              <div class="field"><label>Date of Birth</label><input type="date" id="p2_dob"></div>
+              <div class="field"><label>Nationality</label>
+                <select id="p2_nationality"><option value="">Select</option><option>Singaporean</option><option>Singapore PR</option><option>Foreigner</option></select>
+              </div>
+              <div class="field"><label>Smoker</label>
+                <select id="p2_smoker"><option value="">Select</option><option>Non-Smoker</option><option>Smoker</option></select>
+              </div>
+              <div class="field"><label>Marital Status</label>
+                <select id="p2_marital"><option value="">Select</option><option>Single</option><option>Married</option><option>Divorced</option><option>Widowed</option></select>
+              </div>
+              <div class="field"><label>Highest Education</label>
+                <select id="p2_edu"><option value="">Select</option><option>Primary</option><option>Secondary</option><option>Diploma</option><option>Degree</option><option>Postgraduate</option></select>
+              </div>
+              <div class="field"><label>Occupation</label><input type="text" id="p2_occ" placeholder="e.g. Teacher"></div>
+              <div class="field"><label>Company Name</label><input type="text" id="p2_company"></div>
+              <div class="field"><label>Contact Number</label><input type="tel" id="p2_contact"></div>
+              <div class="field"><label>Email Address</label><input type="email" id="p2_email"></div>
+            </div>
+          </div>
+        </div>
+        <div style="margin-top:16px;" class="field"><label>Residential Address</label><input type="text" id="address" placeholder="Block / Street name, Unit number"></div>
+        <div style="margin-top:10px;" class="grid-2">
+          <div class="field"><label>Postal Code</label><input type="text" id="postal" placeholder="6 digits"></div>
+        </div>
+      </div>
+
+      <div class="nav-buttons">
+        <span></span>
+        <button class="btn-next" onclick="goTo(1)">Income & Expenses →</button>
+      </div>
+    </div>
+
+    <!-- SECTION 1: Income & Expenses -->
+    <div class="section-panel" id="sec1">
+      <div class="panel-title">Income & Expenditure</div>
+      <div class="panel-subtitle">Monthly figures unless otherwise stated.</div>
+
+      <div class="card">
+        <div class="card-title">Income</div>
+        <div class="row-field-header">
+          <span></span><span>Self (Monthly)</span><span>Partner (Monthly)</span>
+        </div>
+        <div class="row-field"><div class="row-label">Gross Monthly Income</div>
+          <div class="field"><input type="number" id="p1_gross" placeholder="0" min="0"></div>
+          <div class="field"><input type="number" id="p2_gross" placeholder="0" min="0"></div>
+        </div>
+        <div class="row-field"><div class="row-label">Take Home Monthly Income</div>
+          <div class="field"><input type="number" id="p1_takehome" placeholder="0" min="0"></div>
+          <div class="field"><input type="number" id="p2_takehome" placeholder="0" min="0"></div>
+        </div>
+        <div class="row-field"><div class="row-label">Bonus (months)</div>
+          <div class="field"><input type="number" id="p1_bonus" placeholder="0" min="0" step="0.5"></div>
+          <div class="field"><input type="number" id="p2_bonus" placeholder="0" min="0" step="0.5"></div>
+        </div>
+        <div class="row-field"><div class="row-label">Commission (Monthly)</div>
+          <div class="field"><input type="number" id="p1_commission" placeholder="0" min="0"></div>
+          <div class="field"><input type="number" id="p2_commission" placeholder="0" min="0"></div>
+        </div>
+        <div class="row-field"><div class="row-label">Rental Income (Monthly)</div>
+          <div class="field"><input type="number" id="p1_rental_inc" placeholder="0" min="0"></div>
+          <div class="field"><input type="number" id="p2_rental_inc" placeholder="0" min="0"></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Monthly Expenditure</div>
+        <div class="row-field-header">
+          <span>Category</span><span>Self</span><span>Partner</span>
+        </div>
+        <div id="expRows">
+          <!-- Utilities -->
+          <div class="row-field"><div class="row-label">Water & Electricity</div>
+            <input type="number" id="exp_p1_utility" placeholder="0" min="0">
+            <input type="number" id="exp_p2_utility" placeholder="0" min="0">
+          </div>
+          <div class="row-field"><div class="row-label">Telecommunications</div>
+            <input type="number" id="exp_p1_telco" placeholder="0" min="0">
+            <input type="number" id="exp_p2_telco" placeholder="0" min="0">
+          </div>
+          <div class="row-field"><div class="row-label">Maintenance / Town Council</div>
+            <input type="number" id="exp_p1_maint" placeholder="0" min="0">
+            <input type="number" id="exp_p2_maint" placeholder="0" min="0">
+          </div>
+          <!-- Household -->
+          <div class="row-field"><div class="row-label">Own Food</div>
+            <input type="number" id="exp_p1_food" placeholder="0" min="0">
+            <input type="number" id="exp_p2_food" placeholder="0" min="0">
+          </div>
+          <div class="row-field"><div class="row-label">Personal Care & Grooming</div>
+            <input type="number" id="exp_p1_grooming" placeholder="0" min="0">
+            <input type="number" id="exp_p2_grooming" placeholder="0" min="0">
+          </div>
+          <div class="row-field"><div class="row-label">Parents Allowance</div>
+            <input type="number" id="exp_p1_parents" placeholder="0" min="0">
+            <input type="number" id="exp_p2_parents" placeholder="0" min="0">
+          </div>
+          <div class="row-field"><div class="row-label">Groceries</div>
+            <input type="number" id="exp_p1_groceries" placeholder="0" min="0">
+            <input type="number" id="exp_p2_groceries" placeholder="0" min="0">
+          </div>
+          <div class="row-field"><div class="row-label">Children Expenses</div>
+            <input type="number" id="exp_p1_children" placeholder="0" min="0">
+            <input type="number" id="exp_p2_children" placeholder="0" min="0">
+          </div>
+          <!-- Misc -->
+          <div class="row-field"><div class="row-label">Recreation / Leisure</div>
+            <input type="number" id="exp_p1_recreation" placeholder="0" min="0">
+            <input type="number" id="exp_p2_recreation" placeholder="0" min="0">
+          </div>
+          <div class="row-field"><div class="row-label">Regular Trips</div>
+            <input type="number" id="exp_p1_travel" placeholder="0" min="0">
+            <input type="number" id="exp_p2_travel" placeholder="0" min="0">
+          </div>
+          <!-- Transport -->
+          <div class="row-field"><div class="row-label">Public Transport</div>
+            <input type="number" id="exp_p1_transport" placeholder="0" min="0">
+            <input type="number" id="exp_p2_transport" placeholder="0" min="0">
+          </div>
+          <div class="row-field"><div class="row-label">Car Loan / Expenses</div>
+            <input type="number" id="exp_p1_car" placeholder="0" min="0">
+            <input type="number" id="exp_p2_car" placeholder="0" min="0">
+          </div>
+          <!-- Instalments -->
+          <div class="row-field"><div class="row-label">Housing Loan (Monthly)</div>
+            <input type="number" id="exp_p1_housing" placeholder="0" min="0">
+            <input type="number" id="exp_p2_housing" placeholder="0" min="0">
+          </div>
+          <div class="row-field"><div class="row-label">Insurance Premiums</div>
+            <input type="number" id="exp_p1_insurance_exp" placeholder="0" min="0">
+            <input type="number" id="exp_p2_insurance_exp" placeholder="0" min="0">
+          </div>
+          <div class="row-field"><div class="row-label">Savings / Investments</div>
+            <input type="number" id="exp_p1_savings_exp" placeholder="0" min="0">
+            <input type="number" id="exp_p2_savings_exp" placeholder="0" min="0">
+          </div>
+          <div class="row-field"><div class="row-label">Other Expenses</div>
+            <input type="number" id="exp_p1_other" placeholder="0" min="0">
+            <input type="number" id="exp_p2_other" placeholder="0" min="0">
+          </div>
+        </div>
+      </div>
+
+      <div class="nav-buttons">
+        <button class="btn-back" onclick="goTo(0)">← Back</button>
+        <button class="btn-next" onclick="goTo(2)">Assets & Liabilities →</button>
+      </div>
+    </div>
+
+    <!-- SECTION 2: Assets & Liabilities -->
+    <div class="section-panel" id="sec2">
+      <div class="panel-title">Assets & Liabilities</div>
+      <div class="panel-subtitle">Current balances. Leave blank if not applicable.</div>
+
+      <div class="card">
+        <div class="card-title">CPF Balances</div>
+        <div class="row-field-header"><span>Account</span><span>Self</span><span>Partner</span></div>
+        <div class="row-field"><div class="row-label">Ordinary Account</div>
+          <input type="number" id="cpf_p1_oa" placeholder="0" min="0">
+          <input type="number" id="cpf_p2_oa" placeholder="0" min="0">
+        </div>
+        <div class="row-field"><div class="row-label">Special Account</div>
+          <input type="number" id="cpf_p1_sa" placeholder="0" min="0">
+          <input type="number" id="cpf_p2_sa" placeholder="0" min="0">
+        </div>
+        <div class="row-field"><div class="row-label">Medisave Account</div>
+          <input type="number" id="cpf_p1_ma" placeholder="0" min="0">
+          <input type="number" id="cpf_p2_ma" placeholder="0" min="0">
+        </div>
+        <div class="row-field"><div class="row-label">Retirement Account</div>
+          <input type="number" id="cpf_p1_ra" placeholder="0" min="0">
+          <input type="number" id="cpf_p2_ra" placeholder="0" min="0">
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Investments & Savings</div>
+        <div class="row-field-header"><span>Type</span><span>Self</span><span>Partner</span></div>
+        <div class="row-field"><div class="row-label">Cash / Bank Savings</div>
+          <input type="number" id="inv_p1_cash" placeholder="0" min="0">
+          <input type="number" id="inv_p2_cash" placeholder="0" min="0">
+        </div>
+        <div class="row-field"><div class="row-label">SRS</div>
+          <input type="number" id="inv_p1_srs" placeholder="0" min="0">
+          <input type="number" id="inv_p2_srs" placeholder="0" min="0">
+        </div>
+        <div class="row-field"><div class="row-label">Fixed Deposits / Bonds</div>
+          <input type="number" id="inv_p1_bonds" placeholder="0" min="0">
+          <input type="number" id="inv_p2_bonds" placeholder="0" min="0">
+        </div>
+        <div class="row-field"><div class="row-label">Unit Trusts / ILPs</div>
+          <input type="number" id="inv_p1_ut" placeholder="0" min="0">
+          <input type="number" id="inv_p2_ut" placeholder="0" min="0">
+        </div>
+        <div class="row-field"><div class="row-label">Shares / Equities</div>
+          <input type="number" id="inv_p1_shares" placeholder="0" min="0">
+          <input type="number" id="inv_p2_shares" placeholder="0" min="0">
+        </div>
+        <div class="row-field"><div class="row-label">Regular Savings Plan</div>
+          <input type="number" id="inv_p1_rsp" placeholder="0" min="0">
+          <input type="number" id="inv_p2_rsp" placeholder="0" min="0">
+        </div>
+        <div class="row-field"><div class="row-label">Other Investments</div>
+          <input type="number" id="inv_p1_other" placeholder="0" min="0">
+          <input type="number" id="inv_p2_other" placeholder="0" min="0">
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Property & Liabilities</div>
+        <div class="row-field-header"><span>Item</span><span>Self</span><span>Partner</span></div>
+        <div class="row-field"><div class="row-label">Property Value</div>
+          <input type="number" id="prop_p1_value" placeholder="0" min="0">
+          <input type="number" id="prop_p2_value" placeholder="0" min="0">
+        </div>
+        <div class="row-field"><div class="row-label">Outstanding Mortgage</div>
+          <input type="number" id="prop_p1_loan" placeholder="0" min="0">
+          <input type="number" id="prop_p2_loan" placeholder="0" min="0">
+        </div>
+        <div class="row-field"><div class="row-label">Car Value</div>
+          <input type="number" id="car_p1_value" placeholder="0" min="0">
+          <input type="number" id="car_p2_value" placeholder="0" min="0">
+        </div>
+        <div class="row-field"><div class="row-label">Outstanding Car Loan</div>
+          <input type="number" id="car_p1_loan" placeholder="0" min="0">
+          <input type="number" id="car_p2_loan" placeholder="0" min="0">
+        </div>
+        <div class="row-field"><div class="row-label">Other Liabilities</div>
+          <input type="number" id="liab_p1_other" placeholder="0" min="0">
+          <input type="number" id="liab_p2_other" placeholder="0" min="0">
+        </div>
+      </div>
+
+      <div class="nav-buttons">
+        <button class="btn-back" onclick="goTo(1)">← Back</button>
+        <button class="btn-next" onclick="goTo(3)">Insurance Coverage →</button>
+      </div>
+    </div>
+
+    <!-- SECTION 3: Insurance -->
+    <div class="section-panel" id="sec3">
+      <div class="panel-title">Existing Insurance Coverage</div>
+      <div class="panel-subtitle">Current coverage amounts. Enter 0 if no existing coverage.</div>
+
+      <div class="card">
+        <div class="card-title">Protection Coverage</div>
+        <div class="row-field-header"><span>Coverage Type</span><span>Self ($)</span><span>Partner ($)</span></div>
+        <div class="row-field"><div class="row-label">Death Coverage</div>
+          <input type="number" id="ins_p1_death" placeholder="0" min="0">
+          <input type="number" id="ins_p2_death" placeholder="0" min="0">
+        </div>
+        <div class="row-field"><div class="row-label">Total & Permanent Disability</div>
+          <input type="number" id="ins_p1_tpd" placeholder="0" min="0">
+          <input type="number" id="ins_p2_tpd" placeholder="0" min="0">
+        </div>
+        <div class="row-field"><div class="row-label">Critical Illness</div>
+          <input type="number" id="ins_p1_ci" placeholder="0" min="0">
+          <input type="number" id="ins_p2_ci" placeholder="0" min="0">
+        </div>
+        <div class="row-field"><div class="row-label">Early Stage Critical Illness</div>
+          <input type="number" id="ins_p1_eci" placeholder="0" min="0">
+          <input type="number" id="ins_p2_eci" placeholder="0" min="0">
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Hospitalisation & Medical</div>
+        <div class="person-cols">
+          <div>
+            <div class="person-label"><div class="badge">SELF</div></div>
+            <div style="display:flex;flex-direction:column;gap:10px;">
+              <div class="field"><label>Integrated Shield Plan Type</label>
+                <select id="ins_p1_ip_type">
+                  <option value="">Select</option>
+                  <option>Standard (B1)</option><option>Standard (A)</option><option>Private (A)</option><option>Private (Standard)</option>
+                </select>
+              </div>
+              <div class="field"><label>Rider</label>
+                <select id="ins_p1_rider">
+                  <option value="">Select</option><option>No Rider</option><option>Co-Pay Rider</option><option>Full Rider</option>
+                </select>
+              </div>
+              <div class="field"><label>No. of Accident Plans</label>
+                <input type="number" id="ins_p1_accident" placeholder="0" min="0" max="5">
+              </div>
+            </div>
+          </div>
+          <div>
+            <div class="person-label"><div class="badge partner">PARTNER</div></div>
+            <div style="display:flex;flex-direction:column;gap:10px;">
+              <div class="field"><label>Integrated Shield Plan Type</label>
+                <select id="ins_p2_ip_type">
+                  <option value="">Select</option>
+                  <option>Standard (B1)</option><option>Standard (A)</option><option>Private (A)</option><option>Private (Standard)</option>
+                </select>
+              </div>
+              <div class="field"><label>Rider</label>
+                <select id="ins_p2_rider">
+                  <option value="">Select</option><option>No Rider</option><option>Co-Pay Rider</option><option>Full Rider</option>
+                </select>
+              </div>
+              <div class="field"><label>No. of Accident Plans</label>
+                <input type="number" id="ins_p2_accident" placeholder="0" min="0" max="5">
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="nav-buttons">
+        <button class="btn-back" onclick="goTo(2)">← Back</button>
+        <button class="btn-next" onclick="goTo(4)">Planning Goals →</button>
+      </div>
+    </div>
+
+    <!-- SECTION 4: Planning Goals -->
+    <div class="section-panel" id="sec4">
+      <div class="panel-title">Planning Goals & Needs</div>
+      <div class="panel-subtitle">Insurance planning requirements and retirement / estate planning information.</div>
+
+      <div class="card">
+        <div class="card-title">Death Protection Needs</div>
+        <div class="row-field-header"><span>Item</span><span>Self</span><span>Partner</span></div>
+        <div class="row-field"><div class="row-label">Funeral Expenses</div>
+          <input type="number" id="goal_p1_funeral" placeholder="20000" min="0">
+          <input type="number" id="goal_p2_funeral" placeholder="20000" min="0">
+        </div>
+        <div class="row-field"><div class="row-label">Yearly Income Replacement ($)</div>
+          <input type="number" id="goal_p1_income_rep" placeholder="0" min="0">
+          <input type="number" id="goal_p2_income_rep" placeholder="0" min="0">
+        </div>
+        <div class="row-field"><div class="row-label">Years to Provide for Family</div>
+          <input type="number" id="goal_p1_years_prov" placeholder="0" min="0">
+          <input type="number" id="goal_p2_years_prov" placeholder="0" min="0">
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Disability Protection Needs</div>
+        <div class="row-field-header"><span>Item</span><span>Self</span><span>Partner</span></div>
+        <div class="row-field"><div class="row-label">Lump Sum for Immediate Medical Cost</div>
+          <input type="number" id="goal_p1_disability_lump" placeholder="100000" min="0">
+          <input type="number" id="goal_p2_disability_lump" placeholder="100000" min="0">
+        </div>
+        <div class="row-field"><div class="row-label">Yearly Income Replacement ($)</div>
+          <input type="number" id="goal_p1_dis_income" placeholder="0" min="0">
+          <input type="number" id="goal_p2_dis_income" placeholder="0" min="0">
+        </div>
+        <div class="row-field"><div class="row-label">Will You Sell Your Home?</div>
+          <select id="goal_p1_sell_home"><option value="">Select</option><option>Yes</option><option>No</option></select>
+          <select id="goal_p2_sell_home"><option value="">Select</option><option>Yes</option><option>No</option></select>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Critical Illness Needs</div>
+        <div class="row-field-header"><span>Item</span><span>Self</span><span>Partner</span></div>
+        <div class="row-field"><div class="row-label">Lump Sum for Immediate Medical Cost</div>
+          <input type="number" id="goal_p1_ci_lump" placeholder="200000" min="0">
+          <input type="number" id="goal_p2_ci_lump" placeholder="200000" min="0">
+        </div>
+        <div class="row-field"><div class="row-label">Yearly Cost of Medication</div>
+          <input type="number" id="goal_p1_ci_meds" placeholder="12000" min="0">
+          <input type="number" id="goal_p2_ci_meds" placeholder="12000" min="0">
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Retirement Planning</div>
+        <div class="row-field-header"><span>Item</span><span>Self</span><span>Partner</span></div>
+        <div class="row-field"><div class="row-label">Ideal Retirement Age</div>
+          <input type="number" id="goal_p1_ret_age" placeholder="65" min="40" max="80">
+          <input type="number" id="goal_p2_ret_age" placeholder="65" min="40" max="80">
+        </div>
+        <div class="row-field"><div class="row-label">Monthly Living Expenses in Retirement ($)</div>
+          <input type="number" id="goal_p1_ret_exp" placeholder="3000" min="0">
+          <input type="number" id="goal_p2_ret_exp" placeholder="3000" min="0">
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Estate Planning</div>
+        <div class="row-field-header"><span>Item</span><span>Self</span><span>Partner</span></div>
+        <div class="row-field"><div class="row-label">Insurance Nomination</div>
+          <select id="estate_p1_ins_nom"><option value="">Select</option><option>Nominated</option><option>Not Nominated</option><option>Trust</option></select>
+          <select id="estate_p2_ins_nom"><option value="">Select</option><option>Nominated</option><option>Not Nominated</option><option>Trust</option></select>
+        </div>
+        <div class="row-field"><div class="row-label">CPF Nomination</div>
+          <select id="estate_p1_cpf_nom"><option value="">Select</option><option>Nominated</option><option>Not Nominated</option></select>
+          <select id="estate_p2_cpf_nom"><option value="">Select</option><option>Nominated</option><option>Not Nominated</option></select>
+        </div>
+        <div class="row-field"><div class="row-label">Will</div>
+          <select id="estate_p1_will"><option value="">Select</option><option>Yes, in place</option><option>No</option><option>In progress</option></select>
+          <select id="estate_p2_will"><option value="">Select</option><option>Yes, in place</option><option>No</option><option>In progress</option></select>
+        </div>
+        <div class="row-field"><div class="row-label">LPA (Lasting Power of Attorney)</div>
+          <select id="estate_p1_lpa"><option value="">Select</option><option>Yes, in place</option><option>No</option><option>In progress</option></select>
+          <select id="estate_p2_lpa"><option value="">Select</option><option>Yes, in place</option><option>No</option><option>In progress</option></select>
+        </div>
+      </div>
+
+      <div class="nav-buttons">
+        <button class="btn-back" onclick="goTo(3)">← Back</button>
+        <button class="btn-next" onclick="goTo(5)">Assumptions →</button>
+      </div>
+    </div>
+
+    <!-- SECTION 5: Assumptions -->
+    <div class="section-panel" id="sec5">
+      <div class="panel-title">Planning Assumptions</div>
+      <div class="panel-subtitle">Default values are pre-filled. Adjust as needed for this client.</div>
+
+      <div class="card">
+        <div class="card-title">General Assumptions</div>
+        <div class="assumption-row">
+          <div class="a-label">Life Expectancy (years)</div>
+          <input type="number" id="assum_life_exp" value="90" min="70" max="100">
+        </div>
+        <div class="assumption-row">
+          <div class="a-label">Inflation Rate</div>
+          <input type="number" id="assum_inflation" value="3" min="0" max="10" step="0.5"> <span style="font-size:12px;color:var(--muted);margin-left:4px">%</span>
+        </div>
+        <div class="assumption-row">
+          <div class="a-label">Income Growth Rate</div>
+          <input type="number" id="assum_income_growth" value="3" min="0" max="15" step="0.5"> <span style="font-size:12px;color:var(--muted);margin-left:4px">%</span>
+        </div>
+        <div class="assumption-row">
+          <div class="a-label">Education Inflation Rate</div>
+          <input type="number" id="assum_edu_inflation" value="6" min="0" max="15" step="0.5"> <span style="font-size:12px;color:var(--muted);margin-left:4px">%</span>
+        </div>
+        <div class="assumption-row">
+          <div class="a-label">CPF LIFE Start Age</div>
+          <input type="number" id="assum_cpf_life_age" value="65" min="65" max="70">
+        </div>
+        <div class="assumption-row">
+          <div class="a-label">CPF Wage Ceiling ($)</div>
+          <input type="number" id="assum_cpf_ceiling" value="7400" min="6000" max="10000" step="100">
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Asset Return Rates</div>
+        <div class="assumption-row"><div class="a-label">Cash</div><input type="number" id="ret_cash" value="1" min="0" max="10" step="0.1"> <span style="font-size:12px;color:var(--muted);margin-left:4px">%</span></div>
+        <div class="assumption-row"><div class="a-label">SRS</div><input type="number" id="ret_srs" value="3" min="0" max="10" step="0.1"> <span style="font-size:12px;color:var(--muted);margin-left:4px">%</span></div>
+        <div class="assumption-row"><div class="a-label">CPF Investment</div><input type="number" id="ret_cpf_inv" value="4" min="0" max="10" step="0.1"> <span style="font-size:12px;color:var(--muted);margin-left:4px">%</span></div>
+        <div class="assumption-row"><div class="a-label">Non-Volatile Assets</div><input type="number" id="ret_non_vol" value="3" min="0" max="10" step="0.1"> <span style="font-size:12px;color:var(--muted);margin-left:4px">%</span></div>
+        <div class="assumption-row"><div class="a-label">Volatile Assets / Equity</div><input type="number" id="ret_volatile" value="6" min="0" max="20" step="0.1"> <span style="font-size:12px;color:var(--muted);margin-left:4px">%</span></div>
+        <div class="assumption-row"><div class="a-label">Property</div><input type="number" id="ret_property" value="4" min="0" max="15" step="0.1"> <span style="font-size:12px;color:var(--muted);margin-left:4px">%</span></div>
+      </div>
+
+      <div class="nav-buttons">
+        <button class="btn-back" onclick="goTo(4)">← Back</button>
+        <button class="btn-generate" onclick="generateReport()">Generate Report ✦</button>
+      </div>
+    </div>
+
+    <!-- RESULTS PANEL -->
+    <div id="results-panel">
+      <div class="results-header">
+        <div>
+          <h2 id="res_title">Financial Advisory Report</h2>
+          <p id="res_subtitle">Analysis as of today</p>
+        </div>
+        <div class="results-meta" id="res_meta"></div>
+      </div>
+
+      <div class="person-tab-btns">
+        <button class="ptab active" id="ptab1" onclick="switchPersonTab(1)">Self</button>
+        <button class="ptab" id="ptab2" onclick="switchPersonTab(2)">Partner</button>
+      </div>
+
+      <!-- PERSON RESULTS CONTAINERS -->
+      <div id="person1_results"></div>
+      <div id="person2_results" style="display:none"></div>
+
+      <div class="nav-buttons" style="margin-top:32px;">
+        <button class="btn-back" onclick="goTo(5)">← Edit Inputs</button>
+        <button class="btn-primary" onclick="window.print()">Print Report</button>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script>
+let currentSection = 0;
+const totalSections = 7;
+
+function goTo(idx) {
+  if (idx === 6) { generateReport(); return; }
+  document.querySelectorAll('.section-panel').forEach((p,i) => {
+    p.classList.toggle('visible', i === idx);
+  });
+  document.getElementById('results-panel').classList.remove('visible');
+  currentSection = idx;
+  updateNav();
+}
+
+function updateNav() {
+  const items = document.querySelectorAll('.nav-item');
+  items.forEach((item, i) => {
+    item.classList.remove('active','completed');
+    if (i === currentSection) item.classList.add('active');
+    else if (i < currentSection) item.classList.add('completed');
+  });
+  document.getElementById('progressBar').style.width = ((currentSection / (totalSections-1)) * 100) + '%';
+}
+
+function getVal(id, fallback=0) {
+  const el = document.getElementById(id);
+  if (!el) return fallback;
+  const v = parseFloat(el.value);
+  return isNaN(v) ? fallback : v;
+}
+function getStr(id, fallback='') {
+  const el = document.getElementById(id);
+  if (!el) return fallback;
+  return el.value || fallback;
+}
+
+function calcANB(dobId) {
+  const dob = document.getElementById(dobId)?.value;
+  if (!dob) return null;
+  const d = new Date(dob);
+  const today = new Date();
+  let age = today.getFullYear() - d.getFullYear();
+  if (today.getMonth() < d.getMonth() || (today.getMonth() === d.getMonth() && today.getDate() < d.getDate())) age--;
+  return age + 1;
+}
+
+function fmt(n) {
+  if (n === null || n === undefined || isNaN(n)) return 'N/A';
+  return '$' + Math.round(n).toLocaleString();
+}
+function fmtPct(n) {
+  if (isNaN(n) || !isFinite(n)) return 'N/A';
+  return (n * 100).toFixed(1) + '%';
+}
+
+function calcExpenses(prefix) {
+  const ids = ['utility','telco','maint','food','grooming','parents','groceries','children','recreation','travel','transport','car','housing','insurance_exp','savings_exp','other'];
+  return ids.reduce((sum, id) => sum + getVal(`exp_${prefix}_${id}`), 0);
+}
+
+function calcTotalAssets(p) {
+  const cpf = getVal(`cpf_${p}_oa`) + getVal(`cpf_${p}_sa`) + getVal(`cpf_${p}_ma`) + getVal(`cpf_${p}_ra`);
+  const inv = getVal(`inv_${p}_cash`) + getVal(`inv_${p}_srs`) + getVal(`inv_${p}_bonds`) + getVal(`inv_${p}_ut`) + getVal(`inv_${p}_shares`) + getVal(`inv_${p}_rsp`) + getVal(`inv_${p}_other`);
+  const prop = getVal(`prop_${p}_value`) + getVal(`car_${p}_value`);
+  return { cpf, inv, prop, total: cpf + inv + prop };
+}
+
+function calcTotalLiabilities(p) {
+  return getVal(`prop_${p}_loan`) + getVal(`car_${p}_loan`) + getVal(`liab_${p}_other`);
+}
+
+function calcLiquidAssets(p) {
+  return getVal(`inv_${p}_cash`) + getVal(`inv_${p}_srs`);
+}
+
+function calcInvestedAssets(p) {
+  return getVal(`inv_${p}_bonds`) + getVal(`inv_${p}_ut`) + getVal(`inv_${p}_shares`) + getVal(`inv_${p}_rsp`) + getVal(`inv_${p}_other`);
+}
+
+function calcRetirementShortfall(p) {
+  const anb = calcANB(p === 'p1' ? 'p1_dob' : 'p2_dob');
+  if (!anb) return null;
+  const retAge = getVal(`goal_${p}_ret_age`, 65);
+  const lifeExp = getVal('assum_life_exp', 90);
+  const monthlyExp = getVal(`goal_${p}_ret_exp`, 3000);
+  const inflation = getVal('assum_inflation', 3) / 100;
+  const yearsToRetire = Math.max(0, retAge - anb);
+  const yearsInRetirement = Math.max(0, lifeExp - retAge);
+  // Future value of monthly expense at retirement
+  const fvMonthlyExp = monthlyExp * Math.pow(1 + inflation, yearsToRetire);
+  const totalRetirementNeed = fvMonthlyExp * 12 * yearsInRetirement;
+  // Current savings projected
+  const assets = calcTotalAssets(p);
+  const retRate = getVal('ret_non_vol', 3) / 100;
+  const projectedSavings = (assets.inv + assets.cpf) * Math.pow(1 + retRate, yearsToRetire);
+  return totalRetirementNeed - projectedSavings;
+}
+
+function buildPersonResults(p, name) {
+  const anb = calcANB(p === 'p1' ? 'p1_dob' : 'p2_dob');
+  const monthlyIncome = getVal(`${p}_takehome`);
+  const monthlyExp = calcExpenses(p);
+  const surplus = monthlyIncome - monthlyExp;
+  const savingsRate = monthlyIncome > 0 ? surplus / monthlyIncome : null;
+
+  const assets = calcTotalAssets(p);
+  const liabilities = calcTotalLiabilities(p);
+  const netWorth = assets.total - liabilities;
+  const liquidAssets = calcLiquidAssets(p);
+  const investedAssets = calcInvestedAssets(p);
+
+  // Ratios
+  const liquidityMonths = monthlyExp > 0 ? liquidAssets / monthlyExp : null;
+  const liquidToNetWorth = netWorth > 0 ? liquidAssets / netWorth : null;
+  const investedToNetWorth = netWorth > 0 ? investedAssets / netWorth : null;
+  const debtToAsset = assets.total > 0 ? liabilities / assets.total : null;
+  const solvency = assets.total > 0 ? netWorth / assets.total : null;
+
+  // Insurance gaps
+  const funneral = getVal(`goal_${p}_funeral`, 20000);
+  const incomeRep = getVal(`goal_${p}_income_rep`, 0);
+  const yearsProv = getVal(`goal_${p}_years_prov`, 0);
+  const deathNeed = funneral + (incomeRep * yearsProv);
+  const deathCoverage = getVal(`ins_${p}_death`, 0);
+  const deathGap = deathNeed - deathCoverage;
+
+  const disLump = getVal(`goal_${p}_disability_lump`, 100000);
+  const disIncome = getVal(`goal_${p}_dis_income`, 0);
+  const disNeed = disLump + disIncome;
+  const disCoverage = getVal(`ins_${p}_tpd`, 0);
+  const disGap = disNeed - disCoverage;
+
+  const ciLump = getVal(`goal_${p}_ci_lump`, 200000);
+  const ciMeds = getVal(`goal_${p}_ci_meds`, 12000);
+  const ciNeed = ciLump + ciMeds;
+  const ciCoverage = getVal(`ins_${p}_ci`, 0);
+  const ciGap = ciNeed - ciCoverage;
+
+  const retShortfall = calcRetirementShortfall(p);
+
+  const ipType = getStr(`ins_${p}_ip_type`, 'Not selected');
+  const rider = getStr(`ins_${p}_rider`, 'Not selected');
+  const accidents = getVal(`ins_${p}_accident`, 0);
+
+  const insNom = getStr(`estate_${p}_ins_nom`, 'Not selected');
+  const cpfNom = getStr(`estate_${p}_cpf_nom`, 'Not selected');
+  const will = getStr(`estate_${p}_will`, 'Not selected');
+  const lpa = getStr(`estate_${p}_lpa`, 'Not selected');
+
+  function statusCls(val, good, bad) {
+    if (val === null) return 'neutral';
+    if (bad !== undefined && val >= bad) return 'shortage';
+    if (good !== undefined && val >= good) return 'ok';
+    return 'shortage';
+  }
+
+  function barPct(val, max) { return Math.min(100, Math.max(0, (val / max) * 100)).toFixed(1); }
+
+  return `
+    <!-- Cash Flow Summary -->
+    <div class="results-grid">
+      <div class="result-card">
+        <div class="rc-label">Cash Flow Summary</div>
+        <div class="metric-row"><span class="m-label">Monthly Gross Income</span><span class="m-value">${fmt(getVal(p+'_gross'))}</span></div>
+        <div class="metric-row"><span class="m-label">Monthly Take-Home</span><span class="m-value">${fmt(monthlyIncome)}</span></div>
+        <div class="metric-row"><span class="m-label">Monthly Expenses</span><span class="m-value">${fmt(monthlyExp)}</span></div>
+        <div class="metric-row"><span class="m-label">Monthly Surplus / (Deficit)</span><span class="m-value ${surplus < 0 ? 'shortage' : 'ok'}">${fmt(surplus)}</span></div>
+        <div class="metric-row"><span class="m-label">Savings Rate</span><span class="m-value ${savingsRate !== null && savingsRate >= 0.2 ? 'ok' : 'shortage'}">${savingsRate !== null ? (savingsRate*100).toFixed(1)+'%' : 'N/A'}</span></div>
+      </div>
+
+      <div class="result-card">
+        <div class="rc-label">Net Worth</div>
+        <div class="metric-row"><span class="m-label">Total Assets</span><span class="m-value">${fmt(assets.total)}</span></div>
+        <div class="metric-row"><span class="m-label">&nbsp;&nbsp;CPF</span><span class="m-value neutral">${fmt(assets.cpf)}</span></div>
+        <div class="metric-row"><span class="m-label">&nbsp;&nbsp;Investments & Cash</span><span class="m-value neutral">${fmt(assets.inv)}</span></div>
+        <div class="metric-row"><span class="m-label">&nbsp;&nbsp;Property & Car</span><span class="m-value neutral">${fmt(assets.prop)}</span></div>
+        <div class="metric-row"><span class="m-label">Total Liabilities</span><span class="m-value shortage">${fmt(liabilities)}</span></div>
+        <div class="metric-row"><span class="m-label">Net Worth</span><span class="m-value ${netWorth >= 0 ? 'ok' : 'shortage'}">${fmt(netWorth)}</span></div>
+      </div>
+    </div>
+
+    <!-- Financial Ratios -->
+    <div class="summary-block">
+      <h3>Financial Ratios</h3>
+      <div class="ratio-bar">
+        <div class="rb-label">Liquidity</div>
+        <div class="rb-track"><div class="rb-fill ${liquidityMonths !== null && liquidityMonths >= 3 ? 'good' : 'warn'}" style="width:${liquidityMonths !== null ? barPct(liquidityMonths, 12) : 0}%"></div></div>
+        <div class="rb-val ${liquidityMonths !== null && liquidityMonths >= 3 ? 'ok' : ''}" style="color:${liquidityMonths !== null && liquidityMonths >= 3 ? 'var(--success)' : 'var(--warn)'};">${liquidityMonths !== null ? liquidityMonths.toFixed(1)+' mths' : 'N/A'}</div>
+        <div class="rb-guide">Guide: 3–6 months</div>
+      </div>
+      <div class="ratio-bar">
+        <div class="rb-label">Liquid Assets to Net Worth</div>
+        <div class="rb-track"><div class="rb-fill ${liquidToNetWorth !== null && liquidToNetWorth >= 0.15 ? 'good' : 'warn'}" style="width:${liquidToNetWorth !== null ? barPct(liquidToNetWorth, 1) : 0}%"></div></div>
+        <div class="rb-val">${liquidToNetWorth !== null ? fmtPct(liquidToNetWorth) : 'N/A'}</div>
+        <div class="rb-guide">Guide: ≥ 15%</div>
+      </div>
+      <div class="ratio-bar">
+        <div class="rb-label">Invested Assets to Net Worth</div>
+        <div class="rb-track"><div class="rb-fill ${investedToNetWorth !== null && investedToNetWorth >= 0.5 ? 'good' : 'warn'}" style="width:${investedToNetWorth !== null ? barPct(investedToNetWorth, 1) : 0}%"></div></div>
+        <div class="rb-val">${investedToNetWorth !== null ? fmtPct(investedToNetWorth) : 'N/A'}</div>
+        <div class="rb-guide">Guide: ≥ 50%</div>
+      </div>
+      <div class="ratio-bar">
+        <div class="rb-label">Debt to Asset Ratio</div>
+        <div class="rb-track"><div class="rb-fill ${debtToAsset !== null && debtToAsset <= 0.5 ? 'good' : 'warn'}" style="width:${debtToAsset !== null ? barPct(debtToAsset, 1) : 0}%"></div></div>
+        <div class="rb-val">${debtToAsset !== null ? fmtPct(debtToAsset) : 'N/A'}</div>
+        <div class="rb-guide">Guide: ≤ 50%</div>
+      </div>
+      <div class="ratio-bar">
+        <div class="rb-label">Solvency Ratio</div>
+        <div class="rb-track"><div class="rb-fill ${solvency !== null && solvency >= 0.1 ? 'good' : 'warn'}" style="width:${solvency !== null ? barPct(solvency, 1) : 0}%"></div></div>
+        <div class="rb-val">${solvency !== null ? fmtPct(solvency) : 'N/A'}</div>
+        <div class="rb-guide">Guide: ≥ 10%</div>
+      </div>
+    </div>
+
+    <!-- Insurance Gaps -->
+    <div class="results-grid-3">
+      <div class="result-card">
+        <div class="rc-label">Death Protection</div>
+        <div class="metric-row"><span class="m-label">Funeral Expenses</span><span class="m-value">${fmt(funneral)}</span></div>
+        <div class="metric-row"><span class="m-label">Income Replacement</span><span class="m-value">${fmt(incomeRep * yearsProv)}</span></div>
+        <div class="metric-row"><span class="m-label">Total Need</span><span class="m-value">${fmt(deathNeed)}</span></div>
+        <div class="metric-row"><span class="m-label">Existing Coverage</span><span class="m-value ok">${fmt(deathCoverage)}</span></div>
+        <div class="metric-row"><span class="m-label">Surplus / (Gap)</span><span class="m-value ${deathGap > 0 ? 'shortage' : 'ok'}">${fmt(-deathGap)}</span></div>
+      </div>
+      <div class="result-card">
+        <div class="rc-label">Disability Protection</div>
+        <div class="metric-row"><span class="m-label">Lump Sum Need</span><span class="m-value">${fmt(disLump)}</span></div>
+        <div class="metric-row"><span class="m-label">Income Replacement</span><span class="m-value">${fmt(disIncome)}</span></div>
+        <div class="metric-row"><span class="m-label">Total Need</span><span class="m-value">${fmt(disNeed)}</span></div>
+        <div class="metric-row"><span class="m-label">Existing Coverage</span><span class="m-value ok">${fmt(disCoverage)}</span></div>
+        <div class="metric-row"><span class="m-label">Surplus / (Gap)</span><span class="m-value ${disGap > 0 ? 'shortage' : 'ok'}">${fmt(-disGap)}</span></div>
+      </div>
+      <div class="result-card">
+        <div class="rc-label">Critical Illness</div>
+        <div class="metric-row"><span class="m-label">Immediate Lump Sum</span><span class="m-value">${fmt(ciLump)}</span></div>
+        <div class="metric-row"><span class="m-label">Annual Medication</span><span class="m-value">${fmt(ciMeds)}</span></div>
+        <div class="metric-row"><span class="m-label">Total Need</span><span class="m-value">${fmt(ciNeed)}</span></div>
+        <div class="metric-row"><span class="m-label">Existing Coverage</span><span class="m-value ok">${fmt(ciCoverage)}</span></div>
+        <div class="metric-row"><span class="m-label">Early Stage CI</span><span class="m-value ok">${fmt(getVal(`ins_${p}_eci`, 0))}</span></div>
+        <div class="metric-row"><span class="m-label">Surplus / (Gap)</span><span class="m-value ${ciGap > 0 ? 'shortage' : 'ok'}">${fmt(-ciGap)}</span></div>
+      </div>
+    </div>
+
+    <!-- Medical & Retirement & Estate -->
+    <div class="results-grid">
+      <div class="result-card">
+        <div class="rc-label">Hospitalisation & Retirement</div>
+        <div class="metric-row"><span class="m-label">Shield Plan</span><span class="m-value neutral">${ipType}</span></div>
+        <div class="metric-row"><span class="m-label">Rider</span><span class="m-value neutral">${rider}</span></div>
+        <div class="metric-row"><span class="m-label">Accident Plans</span><span class="m-value neutral">${accidents}</span></div>
+        <div class="metric-row" style="margin-top:8px;"><span class="m-label">Retirement Need (est.)</span><span class="m-value ${retShortfall !== null && retShortfall > 0 ? 'shortage' : 'ok'}">${retShortfall !== null ? fmt(retShortfall) + ' shortfall' : 'N/A'}</span></div>
+      </div>
+      <div class="result-card">
+        <div class="rc-label">Estate Planning</div>
+        <div class="metric-row"><span class="m-label">Insurance Nomination</span><span class="m-value ${insNom === 'Nominated' || insNom === 'Trust' ? 'ok' : 'shortage'}">${insNom}</span></div>
+        <div class="metric-row"><span class="m-label">CPF Nomination</span><span class="m-value ${cpfNom === 'Nominated' ? 'ok' : 'shortage'}">${cpfNom}</span></div>
+        <div class="metric-row"><span class="m-label">Will</span><span class="m-value ${will === 'Yes, in place' ? 'ok' : 'shortage'}">${will}</span></div>
+        <div class="metric-row"><span class="m-label">LPA</span><span class="m-value ${lpa === 'Yes, in place' ? 'ok' : 'shortage'}">${lpa}</span></div>
+      </div>
+    </div>
+
+    <!-- Advisory Summary -->
+    <div class="summary-block">
+      <h3>Advisory Summary — ${name}</h3>
+      <div class="summary-text">
+        ${anb ? `<p>Age Next Birthday: <span class="highlight">${anb}</span></p>` : ''}
+        <p>${surplus >= 0
+          ? `Monthly cash surplus of <span class="ok">${fmt(surplus)}</span>. ${savingsRate !== null && savingsRate >= 0.2 ? 'Savings rate is on track.' : 'Consider increasing savings allocation.'}`
+          : `Monthly cash <span class="warn">deficit of ${fmt(Math.abs(surplus))}</span>. Immediate review of expenditure is recommended.`}</p>
+        <p>${netWorth > 0 ? `Net worth stands at <span class="highlight">${fmt(netWorth)}</span>.` : `Net worth is negative at <span class="warn">${fmt(netWorth)}</span>. Focus on reducing liabilities.`}</p>
+        <p>${deathGap > 0 ? `Death coverage gap of <span class="warn">${fmt(deathGap)}</span> identified.` : `Death coverage appears adequate.`}
+           ${disGap > 0 ? ` Disability gap of <span class="warn">${fmt(disGap)}</span>.` : ` Disability coverage appears adequate.`}
+           ${ciGap > 0 ? ` CI gap of <span class="warn">${fmt(ciGap)}</span>.` : ` CI coverage appears adequate.`}</p>
+        <p>Medical programme: <span class="highlight">${ipType || 'Not specified'}</span>${rider ? ` with ${rider}` : ''}. ${accidents > 0 ? `${accidents} accident plan(s) in place.` : 'No accident plan in place.'}</p>
+        <p>${retShortfall !== null && retShortfall > 0
+          ? `Estimated retirement shortfall of <span class="warn">${fmt(retShortfall)}</span>. Early action recommended.`
+          : retShortfall !== null ? `Projected retirement savings appear sufficient.` : ''}</p>
+        <p>Estate: ${[insNom, cpfNom, will, lpa].some(v => v === 'No' || v === 'Not Nominated' || v === 'Not selected') ? `<span class="warn">Action required</span> — review nomination and documentation.` : `<span class="ok">Documentation appears to be in order.</span>`}</p>
+      </div>
+    </div>
+  `;
+}
+
+function generateReport() {
+  const name1 = getStr('p1_name', 'Self');
+  const name2 = getStr('p2_name', 'Partner');
+  const today = new Date().toLocaleDateString('en-SG', { year:'numeric', month:'long', day:'numeric' });
+
+  document.getElementById('res_title').textContent = `Financial Advisory Report — ${name1}${name2 && name2 !== 'Partner' ? ' & ' + name2 : ''}`;
+  document.getElementById('res_subtitle').textContent = `Fact Find & Needs Analysis`;
+  document.getElementById('res_meta').innerHTML = `Date of Analysis<br>${today}`;
+
+  // Update tab labels
+  document.getElementById('ptab1').textContent = name1 || 'Self';
+  document.getElementById('ptab2').textContent = name2 || 'Partner';
+
+  document.getElementById('person1_results').innerHTML = buildPersonResults('p1', name1 || 'Self');
+  document.getElementById('person2_results').innerHTML = buildPersonResults('p2', name2 || 'Partner');
+
+  // Hide all section panels, show results
+  document.querySelectorAll('.section-panel').forEach(p => p.classList.remove('visible'));
+  document.getElementById('results-panel').classList.add('visible');
+
+  // Update nav
+  currentSection = 6;
+  updateNav();
+
+  // Scroll to top
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function switchPersonTab(n) {
+  document.getElementById('person1_results').style.display = n === 1 ? 'block' : 'none';
+  document.getElementById('person2_results').style.display = n === 2 ? 'block' : 'none';
+  document.getElementById('ptab1').classList.toggle('active', n === 1);
+  document.getElementById('ptab2').classList.toggle('active', n === 2);
+}
+
+function resetForm() {
+  if (!confirm('Reset all inputs? This cannot be undone.')) return;
+  document.querySelectorAll('input:not([type="submit"]):not([type="button"]), select').forEach(el => {
+    if (el.tagName === 'SELECT') el.selectedIndex = 0;
+    else if (el.type === 'number' && el.defaultValue) el.value = el.defaultValue;
+    else el.value = '';
+  });
+  document.getElementById('assum_life_exp').value = 90;
+  document.getElementById('assum_inflation').value = 3;
+  document.getElementById('assum_income_growth').value = 3;
+  document.getElementById('assum_edu_inflation').value = 6;
+  document.getElementById('assum_cpf_life_age').value = 65;
+  document.getElementById('assum_cpf_ceiling').value = 7400;
+  document.getElementById('ret_cash').value = 1;
+  document.getElementById('ret_srs').value = 3;
+  document.getElementById('ret_cpf_inv').value = 4;
+  document.getElementById('ret_non_vol').value = 3;
+  document.getElementById('ret_volatile').value = 6;
+  document.getElementById('ret_property').value = 4;
+  goTo(0);
+}
+
+updateNav();
+</script>
+</body>
+</html>
